@@ -271,7 +271,7 @@ function atualizarPainel(){
   }
 }
 function progressoAusente(){
-  if(!dados.iniciado)return;
+  if(!dados.iniciado||dados.pausado)return;
   const agora=Date.now(),sec=Math.min(8*3600,Math.max(0,(agora-(dados.ultimoRegistro||agora))/1000));
   if(sec<35)return;
   const oAntes=dados.onda;
@@ -454,7 +454,7 @@ function atualizarQuadro(instante){
   if(!desenhando)return;
   const dt=Math.min(.08,Math.max(0,(instante-(ultimoQuadro||instante))/1000));
   ultimoQuadro=instante;segundos+=dt;
-  if(dados.iniciado && !dados.pausado){
+  if(dados.iniciado && !dados.pausado && !document.hidden){
     if(recargas.ressurgir>0){recargas.ressurgir-=dt;if(recargas.ressurgir<=0){dados.vida=vidaMaxima();registrar('A energia do Flow reconstruiu o guardião!');}}
     for(const id of [...HABILIDADES.map(h=>h.id),'protecao'])recargas[id]=Math.max(0,(recargas[id]||0)-dt);
     if(queda>0){queda+=dt*.43;if(queda>=1){fimDoChefe();}}
@@ -481,7 +481,7 @@ function atualizarQuadro(instante){
   if(instante-tempoAviso>240){
     atualizarPainel();tempoAviso=instante;
   }
-  if(instante-ultimoSalvamento>5000){salvar();ultimoSalvamento=instante;}
+  if(!document.hidden && instante-ultimoSalvamento>5000){salvar();ultimoSalvamento=instante;}
   requestAnimationFrame(atualizarQuadro);
 }
 function instalarEventos(){
@@ -500,7 +500,7 @@ function instalarEventos(){
     dados.pausado=!dados.pausado;$('botao-pausar').textContent=dados.pausado?'Retomar':'Pausar';
     registrar(dados.pausado?'Batalha pausada neste dispositivo.':'A batalha foi retomada.');salvar();
   });
-  document.addEventListener('visibilitychange',()=>{if(document.hidden)salvar();});
+  document.addEventListener('visibilitychange',()=>{if(document.hidden){salvar();}else if(dados.iniciado){progressoAusente();inimigo=obterInimigo(dados.onda);atualizarPainel();}});
   window.addEventListener('pagehide',salvar);
   if('serviceWorker' in navigator && location.protocol!=='file:'){
     window.addEventListener('load',()=>navigator.serviceWorker.register('./servico-worker.js').catch(()=>{}));
