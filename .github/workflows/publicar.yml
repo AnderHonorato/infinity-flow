@@ -1,0 +1,62 @@
+name: Publicar Infinity Flow
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  testar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Conferir JavaScript
+        run: node --check web/jogo.js
+      - name: Conferir os arquivos do jogo
+        run: test -f web/index.html && test -f web/estilos.css && test -f web/manifest.webmanifest
+  apk:
+    needs: testar
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: android-actions/setup-android@v3
+      - name: Instalar Capacitor
+        run: npm install --no-audit --no-fund
+      - name: Gerar projeto Android
+        run: npx cap add android && npx cap sync android
+      - name: Compilar APK
+        working-directory: android
+        run: chmod +x gradlew && ./gradlew assembleDebug --no-daemon
+      - name: Disponibilizar APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Infinity-Flow-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+  site:
+    needs: testar
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.publicar.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: web
+      - name: Publicar no Pages
+        id: publicar
+        uses: actions/deploy-pages@v4

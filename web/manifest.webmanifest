@@ -1,0 +1,19 @@
+{
+  "name": "Infinity Flow — O Despertar do Abismo",
+  "short_name": "Infinity Flow",
+  "description": "Batalhas automáticas, heróis evolutivos e mundos infinitos.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#090e20",
+  "theme_color": "#11172c",
+  "icons": [
+    {
+      "src": "./icone.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "lang": "pt-BR"
+}

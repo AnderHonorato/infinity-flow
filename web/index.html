@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#101629">
+  <meta name="description" content="Infinity Flow: uma aventura incremental com heróis, mundos e batalhas automáticas.">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icone.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./estilos.css">
+  <title>Infinity Flow — O Despertar do Abismo</title>
+</head>
+<body>
+  <div class="ceus" aria-hidden="true"><div class="orbe"></div><div class="estrelas"></div></div>
+  <header class="topo">
+    <div class="marca"><img src="./icone.svg" alt="" width="42" height="42"><div><strong>infinity <em>flow</em></strong><small>CRÔNICAS DO INFINITO</small></div></div>
+    <div class="topo-acoes"><span class="marcador-capitulo">CAPÍTULO I <i></i> O DESPERTAR</span><button class="botao-icone" id="botao-som" title="Alternar som" aria-label="Alternar som">♫</button><button class="botao-icone" id="botao-ajuda" title="Como jogar" aria-label="Como jogar">?</button></div>
+  </header>
+  <main>
+    <section id="tela-inicial" class="apresentacao">
+      <div class="apresentacao-texto"><span class="sobrelinha"><span class="brilho-ponto"></span> UMA JORNADA SEM FIM</span><h1>Todo fim é um <span>novo começo.</span></h1><p>Além da última estrela, um abismo despertou. Escolha quem enfrentará a escuridão e deixe sua lenda crescer — mesmo quando você estiver longe.</p><div class="selos"><span>✧ Combate automático</span><span>✧ Evolução constante</span><span>✧ Progresso offline</span></div></div>
+      <div class="escolha-caixa"><div class="caixa-cabecalho"><div><span class="sobrelinha">O SEU DESTINO COMEÇA AQUI</span><h2>Escolha seu guardião</h2></div><span class="contador-herois">01 / 03</span></div><div class="herois" id="lista-herois"></div><div class="perfil-heroi" id="perfil-heroi"></div><button class="botao-principal" id="botao-comecar"><span>Iniciar jornada</span><span>↗</span></button><p class="observacao">Seu progresso é salvo automaticamente neste dispositivo.</p></div>
+    </section>
+    <section id="tela-jogo" class="jogo escondido">
+      <div class="linha-status"><div class="localizacao"><small>O DESPERTAR DO ABISMO · ATO I</small><h2 id="nome-local">Trilha das Sombras</h2><span id="frase-local">Há algo observando do outro lado do penhasco...</span></div><div class="medidores"><div class="medidor-moedas">✦ <strong id="valor-ouro">0</strong><small>OURO</small></div><div class="medidor-moedas violeta">◇ <strong id="valor-essencia">0</strong><small>ESSÊNCIA</small></div><div class="medidor-moedas">⚔ <strong id="valor-dps">0</strong><small>DPS</small></div></div></div>
+      <div class="jogo-layout">
+        <div class="centro">
+          <div class="barra-estagio"><span id="texto-onda">ENCONTRO 01 / 12</span><div class="trilha-progresso" id="trilha-progresso"></div><button class="botao-mapa" id="botao-mapa">⌁ <span>Mapa</span></button></div>
+          <div class="cena" id="cena" role="button" tabindex="0" aria-label="Campo de batalha, toque para golpear"><canvas id="tela-batalha" width="1120" height="650"></canvas><div class="cena-superior"><div class="alvo-nome"><small id="alvo-tipo">RAÇA UMBRAL</small><strong id="nome-inimigo">Rastejante do Eclipse</strong><div class="barra-vida inimigo"><span id="barra-inimigo"></span></div><span id="vida-inimigo">100 / 100 PV</span></div></div><div class="cena-inferior"><div class="selo-luta"><span class="pulso"></span> BATALHA AUTOMÁTICA</div><div class="dica-toque">TOQUE PARA ATACAR +</div></div><div class="legenda-efeito" id="aviso-batalha" aria-live="polite"></div></div>
+          <div class="rodape-cena"><div class="heroico"><div class="retrato-pequeno" id="retrato-heroi"></div><div><strong id="nome-heroi-jogo">Astra</strong><span id="nivel-heroi">Nível 1</span><div class="barra-vida jogador"><span id="barra-heroi"></span></div></div></div><div class="habilidades" id="lista-habilidades"></div></div>
+          <div class="registro"><span class="ponto-ativo"></span><span id="texto-registro">A aventura está apenas começando.</span><button id="botao-pausar">Pausar</button></div>
+        </div>
+        <aside class="painel"><div class="painel-topo"><div><span class="sobrelinha">O PODER EM SUAS MÃOS</span><h3>Ascensão do herói</h3></div><span class="emblema">✧</span></div><div class="cartao-progresso"><div class="cartao-valor"><span>SEU NÍVEL</span><strong id="grande-nivel">01</strong></div><div class="xp-header"><span>Experiência</span><span id="texto-xp">0 / 30</span></div><div class="barra-xp"><span id="barra-xp"></span></div><p id="texto-evolucao">Novas formas despertam conforme você evolui.</p></div><div class="titulo-upgrades"><h4>Fortalecer</h4><span>APrimoramentos</span></div><div class="lista-melhorias" id="lista-melhorias"></div><div class="painel-rodape"><span>✦</span> A batalha continua enquanto você explora o menu.</div></aside>
+      </div>
+      <div class="abaixo-jogo"><button class="cartao-navegacao" id="abrir-mapa-inferior"><span class="icone-navegacao">⌁</span><span><strong>Árvore do mundo</strong><small>Explore os caminhos do infinito</small></span><span>↗</span></button><button class="cartao-navegacao" id="abrir-detalhes"><span class="icone-navegacao">✦</span><span><strong>Detalhes do guardião</strong><small>O poder deixa marcas visíveis</small></span><span>↗</span></button></div>
+    </section>
+  </main>
+  <footer class="rodape"><span>INFINITY FLOW <span>·</span> PRIMEIRO CAPÍTULO</span><span>Feito para crescer com cada aventura.</span></footer>
+  <div class="modal-fundo escondido" id="modal-fundo" role="dialog" aria-modal="true"><div class="janela-modal"><button class="fechar-modal" id="fechar-modal" aria-label="Fechar">×</button><div id="conteudo-modal"></div></div></div>
+  <div id="notificacoes" aria-live="polite"></div>
+  <script src="./jogo.js" defer></script>
+</body>
+</html>

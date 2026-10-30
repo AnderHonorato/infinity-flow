@@ -1,0 +1,19 @@
+{
+  "name": "infinity-flow",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "android": "cap add android",
+    "sincronizar": "cap sync android",
+    "verificar": "node --check web/jogo.js",
+    "servir": "npx serve web"
+  },
+  "dependencies": {
+    "@capacitor/android": "^7.4.4",
+    "@capacitor/core": "^7.4.4"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.4.4"
+  }
+}

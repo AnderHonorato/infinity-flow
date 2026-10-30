@@ -1,0 +1,11 @@
+{
+  "appId": "br.com.anderflow.infinityflow",
+  "appName": "Infinity Flow",
+  "webDir": "web",
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "backgroundColor": "#090e20"
+  }
+}
