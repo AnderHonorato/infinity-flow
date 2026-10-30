@@ -156,7 +156,7 @@ function recompensa(vitorias=1,ouroExtra=0){
   const ouro=ouroExtra||Math.floor((18+dados.onda*5)*Math.pow(1.245,Math.min(ondaLimitada(),450))*(ehMinichefe(dados.onda)?2:1));
   const xp=Math.floor((12+dados.onda*4)*Math.pow(1.16,Math.min(dados.onda-1,240)));
   dados.ouro+=ouro*vitorias;dados.xp+=xp*vitorias;dados.abates+=vitorias;
-  while(dados.xp>=experienciaNecessaria() && dados.nivel<1000000){
+  while(dados.xp>=experienciaNecessaria()){
     dados.xp-=experienciaNecessaria();dados.nivel++;
     dados.vida=Math.min(vidaMaxima(),dados.vida+vidaMaxima()*.25);
     if([10,22,40].includes(dados.nivel)){notificar('Evolução visual!','Seu guardião despertou uma nova forma.');faiscar(230,470,heroiAtual().cor,45);}
@@ -230,6 +230,13 @@ function melhorar(id){
   if(id==='arma' && dados.melhorias.arma%5===0)faiscar(210,420,heroiAtual().cor,35);
   musica(830,.16);atualizarPainel();salvar();
 }
+function aperfeicoarPoder(id){
+  const h=HABILIDADES.find(p=>p.id===id);if(!h)return;
+  const preco=custoHabilidade(h);if(dados.ouro<preco)return;
+  dados.ouro-=preco;dados.poderes[id]++;
+  notificar(dados.poderes[id]===1?'Poder aprendido!':'Poder aprimorado!',h.nome+' · nível '+dados.poderes[id]);
+  musica(850,.2);salvar();atualizarPainel();
+}
 function atualizarPainel(){
   if(!dados.iniciado)return;
   $('valor-ouro').textContent=numero(dados.ouro);
@@ -252,9 +259,9 @@ function atualizarPainel(){
   $('trilha-progresso').innerHTML=Array.from({length:12},(_,i)=>'<span class="marco '+(i===11?'boss ':'')+(dados.concluido||i+1<dados.onda?'feito':i+1===dados.onda?'agora':'')+'"></span>').join('');
   $('lista-melhorias').innerHTML=MELHORIAS.map(m=>{const preco=custo(m);
     return '<div class="melhoria"><div class="melhoria-icone">'+m.icone+'</div><div class="melhoria-nome"><strong>'+m.nome+'</strong><span>Nível '+numero(dados.melhorias[m.id])+' · '+m.descricao+'</span></div><button class="botao-melhoria" data-melhoria="'+m.id+'" '+(dados.ouro<preco?'disabled':'')+'>✦ '+numero(preco)+'</button></div>';
-  }).join('')+'<div class="titulo-upgrades"><h4>Despertar poderes</h4></div>'+HABILIDADES.map(h=>'<div class="melhoria"><div class="melhoria-icone">'+h.icone+'</div><div class="melhoria-nome"><strong>'+h.nome+'</strong><span>'+ (dados.poderes[h.id]?'Aprendido · recarga '+h.recarga+'s':h.descricao)+'</span></div><button class="botao-melhoria" data-poder="'+h.id+'" '+(dados.poderes[h.id]||dados.ouro<custoHabilidade(h)?'disabled':'')+'>'+ (dados.poderes[h.id]?'✓':'✦ '+numero(custoHabilidade(h)))+'</button></div>').join('');
+  }).join('')+'<div class="titulo-upgrades"><h4>Despertar poderes</h4></div>'+HABILIDADES.map(h=>'<div class="melhoria"><div class="melhoria-icone">'+h.icone+'</div><div class="melhoria-nome"><strong>'+h.nome+'</strong><span>'+ (dados.poderes[h.id]?'Nível '+dados.poderes[h.id]+' · recarga '+h.recarga+'s':h.descricao)+'</span></div><button class="botao-melhoria" data-poder="'+h.id+'" '+(dados.ouro<custoHabilidade(h)?'disabled':'')+'>'+ (dados.poderes[h.id]?'↑ ':'✦ ')+numero(custoHabilidade(h))+'</button></div>').join('');
   document.querySelectorAll('[data-melhoria]').forEach(b=>b.addEventListener('click',()=>melhorar(b.dataset.melhoria)));
-  document.querySelectorAll('[data-poder]').forEach(b=>b.addEventListener('click',()=>habilidade(b.dataset.poder)));
+  document.querySelectorAll('[data-poder]').forEach(b=>b.addEventListener('click',()=>aperfeicoarPoder(b.dataset.poder)));
   for(const h of HABILIDADES){
     const b=$('habilidade-'+h.id);if(!b)continue;
     const r=Math.ceil(recargas[h.id]||0);
@@ -430,8 +437,9 @@ function desenhar(ctx,t){
   ctx.save();
   if(tremor>0)ctx.translate((Math.random()-.5)*tremor*20,(Math.random()-.5)*tremor*10);
   fundo(ctx,t);
-  if(dados.onda<=12 && !dados.concluido){
-    if(ehChefe(dados.onda)||queda>0)desenharColosso(ctx,t);
+  if(queda>0)desenharColosso(ctx,t);
+  else if(dados.onda<=12 && !dados.concluido){
+    if(ehChefe(dados.onda))desenharColosso(ctx,t);
     else if(inimigo)desenharUmbral(ctx,780,500,t);
   } else if(inimigo && queda===0)desenharUmbral(ctx,780,500,t);
   desenharGuardiao(ctx,225,505,t);
