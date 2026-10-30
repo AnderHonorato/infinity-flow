@@ -16,7 +16,7 @@
 Abra `web/index.html` ou, para testar também o modo instalável/offline, inicie um servidor HTTP: `npx serve web`.
 
 ## APK pelo GitHub Actions
-No menu **Actions**, execute **Publicar Infinity Flow** ou envie um commit para main. O workflow gera um APK Android de depuração e o anexa como artefato. Também tenta publicar a versão web via GitHub Pages. O APK debug não é assinado para distribuição comercial.
+No menu **Actions**, execute **Publicar Infinity Flow** ou envie um commit para main. O workflow gera um APK Android de depuração e o anexa como artefato. A versão web está publicada em https://infinity-flow-ghisap.v2.appdeploy.ai/. O APK debug utiliza assinatura de teste do Android e não é destinado à distribuição comercial.
 
 ## Android local
 ```sh
