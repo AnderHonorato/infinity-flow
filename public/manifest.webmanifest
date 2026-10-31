@@ -1,0 +1,21 @@
+{
+  "name": "Infinity Flow",
+  "short_name": "Infinity Flow",
+  "description": "Sua jornada não tem fim. RPG automático em português.",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0b0f10",
+  "theme_color": "#0b0f10",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

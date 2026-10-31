@@ -3,22 +3,33 @@ name: Publicar Infinity Flow
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
+
+concurrency:
+  group: infinity-flow-build-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   testar:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Conferir JavaScript
-        run: node --check web/jogo.js
-      - name: Conferir os arquivos do jogo
-        run: test -f web/index.html && test -f web/estilos.css && test -f web/manifest.webmanifest
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Instalar dependências
+        run: npm ci --no-audit --no-fund
+      - name: Testar combate, progresso e persistência
+        run: npm test
+      - name: Compilar interface
+        run: npm run build
+
   apk:
     needs: testar
     runs-on: ubuntu-latest
@@ -27,21 +38,34 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+          cache: npm
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '21'
-      - uses: android-actions/setup-android@v4
-      - name: Instalar Capacitor
-        run: npm install --no-audit --no-fund
-      - name: Gerar projeto Android
-        run: npx cap add android && npx cap sync android
+      - uses: android-actions/setup-android@v3
+      - name: Instalar Android SDK 35
+        run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0' 'build-tools;34.0.0' 'platform-tools'
+      - name: Instalar dependências
+        run: npm ci --no-audit --no-fund
       - name: Compilar APK
-        working-directory: android
-        run: chmod +x gradlew && ./gradlew assembleDebug --no-daemon
+        run: |
+          chmod +x android/gradlew
+          npm run android:build
+      - name: Verificar assinatura e empacotamento
+        run: |
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose android/app/build/outputs/apk/debug/app-debug.apk
+          mkdir -p artifacts
+          cp android/app/build/outputs/apk/debug/app-debug.apk artifacts/infinity-flow.apk
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging artifacts/infinity-flow.apk > artifacts/android-package.txt
+          cd artifacts
+          sha256sum infinity-flow.apk > infinity-flow.apk.sha256
       - name: Disponibilizar APK
         uses: actions/upload-artifact@v4
         with:
           name: Infinity-Flow-APK
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          path: |
+            artifacts/infinity-flow.apk
+            artifacts/infinity-flow.apk.sha256
+            artifacts/android-package.txt
           if-no-files-found: error

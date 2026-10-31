@@ -4,7 +4,14 @@ on:
   push:
     branches: [main]
     paths:
-      - 'web/**'
+      - 'src/**'
+      - 'public/**'
+      - 'tests/**'
+      - 'index.html'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'vite.config.*'
+      - 'tsconfig*.json'
       - '.github/workflows/github-pages.yml'
   workflow_dispatch:
 
@@ -25,17 +32,23 @@ jobs:
       url: ${{ steps.publicacao.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
       - uses: actions/configure-pages@v5
+        id: pages
         with:
           enablement: true
+      - name: Instalar dependências
+        run: npm ci --no-audit --no-fund
       - name: Validar jogo
-        run: |
-          node --check web/jogo.js
-          test -f web/index.html
-          test -f web/manifest.webmanifest
+        run: npm test
+      - name: Compilar para o caminho do GitHub Pages
+        run: npm run build -- --base '${{ steps.pages.outputs.base_path }}/'
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: web
+          path: dist
       - name: Publicar site
         id: publicacao
         uses: actions/deploy-pages@v4
