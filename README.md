@@ -63,6 +63,6 @@ O APK debug assinado, metadados e SHA-256 ficam em `artifacts/`. O workflow **Pu
 - `docs/REFERENCE.md`: estudo de movimento e integração.
 - `legacy/web/`: implementação anterior preservada.
 
-O GitHub Pages publica `dist/` a partir de `main`; o build respeita o caminho do repositório. As ilustrações são originais. O site meuclaudinho.com.br foi usado como referência de movimento, profundidade e resposta ao toque, sem reutilização de seus personagens ou recursos.
+O workflow web compila `dist/` a partir de `main` e o disponibiliza como artefato. Quando GitHub Pages estiver habilitado em Settings → Pages → GitHub Actions, também publica o site; o build respeita o caminho do repositório. As ilustrações são originais. O site meuclaudinho.com.br foi usado como referência de movimento, profundidade e resposta ao toque, sem reutilização de seus personagens ou recursos.
 
 **Limite desta entrega:** primeira região completa e repetível. Mundos seguintes serão implementados e revisados individualmente. APK verificado por compilação, assinatura e conteúdo; a execução em aparelho físico é uma etapa de validação distinta.

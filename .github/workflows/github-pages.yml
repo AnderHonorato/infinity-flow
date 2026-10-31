@@ -36,19 +36,42 @@ jobs:
         with:
           node-version: '22'
           cache: npm
+      - name: Verificar habilitação do GitHub Pages
+        id: disponibilidade
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh api "repos/$GITHUB_REPOSITORY/pages" >/dev/null 2>&1; then
+            echo 'enabled=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'enabled=false' >> "$GITHUB_OUTPUT"
+            echo '::notice::GitHub Pages ainda não habilitado. O build web será entregue como artefato. Para publicar neste domínio, escolha GitHub Actions em Settings > Pages.'
+            echo 'O build web está disponível no artefato Infinity-Flow-Web. GitHub Pages precisa ser habilitado em Settings > Pages para publicação automática.' >> "$GITHUB_STEP_SUMMARY"
+          fi
       - uses: actions/configure-pages@v5
+        if: steps.disponibilidade.outputs.enabled == 'true'
         id: pages
-        with:
-          enablement: true
       - name: Instalar dependências
         run: npm ci --no-audit --no-fund
       - name: Validar jogo
         run: npm test
       - name: Compilar para o caminho do GitHub Pages
-        run: npm run build -- --base '${{ steps.pages.outputs.base_path }}/'
+        env:
+          CONFIGURED_BASE: ${{ steps.pages.outputs.base_path }}
+        run: |
+          base_path="${CONFIGURED_BASE:-/${GITHUB_REPOSITORY#*/}}"
+          npm run build -- --base "$base_path/"
+      - name: Disponibilizar versão web
+        uses: actions/upload-artifact@v4
+        with:
+          name: Infinity-Flow-Web
+          path: dist
+          if-no-files-found: error
       - uses: actions/upload-pages-artifact@v3
+        if: steps.disponibilidade.outputs.enabled == 'true'
         with:
           path: dist
       - name: Publicar site
         id: publicacao
+        if: steps.disponibilidade.outputs.enabled == 'true'
         uses: actions/deploy-pages@v4
