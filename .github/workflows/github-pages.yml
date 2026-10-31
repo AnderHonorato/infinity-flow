@@ -1,0 +1,41 @@
+name: Publicar Infinity Flow Web no GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'web/**'
+      - '.github/workflows/github-pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: infinity-flow-github-pages
+  cancel-in-progress: true
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.publicacao.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - name: Validar jogo
+        run: |
+          node --check web/jogo.js
+          test -f web/index.html
+          test -f web/manifest.webmanifest
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: web
+      - name: Publicar site
+        id: publicacao
+        uses: actions/deploy-pages@v4
