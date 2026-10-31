@@ -9,12 +9,17 @@
   <link rel="icon" href="./icone.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./estilos.css">
   <title>Infinity Flow — O Despertar do Abismo</title>
+<style>
+.guia-atalhos-infinity{display:flex;align-items:center;gap:7px;padding:7px 10px;border:1px solid #a3b4ed2a;border-radius:9px;background:#101a3199;color:#a2b8dc;font:600 10px ui-monospace,Consolas,monospace;white-space:nowrap}
+.guia-atalhos-infinity kbd{display:grid;place-items:center;width:20px;height:20px;border:1px solid #7c9ecd8f;border-radius:5px;color:#e7e9ff;background:#ffffff12}
+@media(max-width:850px){.guia-atalhos-infinity{display:none}}
+</style>
 </head>
 <body>
   <div class="ceus" aria-hidden="true"><div class="orbe"></div><div class="estrelas"></div></div>
   <header class="topo">
     <div class="marca"><img src="./icone.svg" alt="" width="42" height="42"><div><strong>infinity <em>flow</em></strong><small>CRÔNICAS DO INFINITO</small></div></div>
-    <div class="topo-acoes"><span class="marcador-capitulo">CAPÍTULO I <i></i> O DESPERTAR</span><button class="botao-icone" id="botao-som" title="Alternar som" aria-label="Alternar som">♫</button><button class="botao-icone" id="botao-ajuda" title="Como jogar" aria-label="Como jogar">?</button></div>
+    <div class="topo-acoes"><span class="guia-atalhos-infinity" aria-label="Atalhos de teclado: M abre o mapa, P pausa o jogo"><kbd>M</kbd> mapa <kbd>P</kbd> pausar</span><span class="marcador-capitulo">CAPÍTULO I <i></i> O DESPERTAR</span><button class="botao-icone" id="botao-som" title="Alternar som" aria-label="Alternar som">♫</button><button class="botao-icone" id="botao-ajuda" title="Como jogar" aria-label="Como jogar">?</button></div>
   </header>
   <main>
     <section id="tela-inicial" class="apresentacao">
@@ -39,5 +44,19 @@
   <div class="modal-fundo escondido" id="modal-fundo" role="dialog" aria-modal="true"><div class="janela-modal"><button class="fechar-modal" id="fechar-modal" aria-label="Fechar">×</button><div id="conteudo-modal"></div></div></div>
   <div id="notificacoes" aria-live="polite"></div>
   <script src="./jogo.js" defer></script>
+<script>
+/* Os atalhos usam os controles existentes, inclusive suas validações. */
+document.addEventListener('keydown', evento => {
+  if (evento.altKey || evento.ctrlKey || evento.metaKey || evento.repeat) return;
+  if (evento.target instanceof HTMLElement && (evento.target.isContentEditable || ['INPUT','TEXTAREA','SELECT'].includes(evento.target.tagName))) return;
+  const tecla=evento.key.toLowerCase();
+  const id=tecla==='m'?'botao-mapa':tecla==='p'?'botao-pausar':null;
+  if (!id) return;
+  const botao=document.getElementById(id);
+  if (!(botao instanceof HTMLButtonElement) || botao.disabled || !botao.getClientRects().length) return;
+  evento.preventDefault();
+  botao.click();
+});
+</script>
 </body>
 </html>
